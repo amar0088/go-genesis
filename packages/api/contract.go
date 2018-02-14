@@ -18,6 +18,7 @@ package api
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -149,7 +150,9 @@ func contract(w http.ResponseWriter, r *http.Request, data *apiData, logger *log
 	if data.vde {
 		ret, err := VDEContract(serializedData, data)
 		if err != nil {
-			return errorAPI(w, err, http.StatusInternalServerError)
+			json.Unmarshal([]byte(err.Error()), &ret.Message)
+			fmt.Println(*ret.Message)
+			//	return errorAPI(w, err, http.StatusInternalServerError)
 		}
 		data.result = ret
 		return nil
