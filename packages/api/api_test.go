@@ -107,12 +107,16 @@ func sendPost(url string, form *url.Values, v interface{}) error {
 	return sendRequest("POST", url, form, v)
 }
 
+var (
+	node = 2
+)
+
 func keyLogin(state int64) (err error) {
 	var (
 		key, sign []byte
 	)
 
-	key, err = ioutil.ReadFile(`key`)
+	key, err = ioutil.ReadFile(fmt.Sprintf(`/home/ak/two/data/node%d/PrivateKey`, node)) //`key`)
 	if err != nil {
 		return
 	}
@@ -231,6 +235,11 @@ func postTxResult(txname string, form *url.Values) (id int64, msg string, err er
 	if err = appendSign(ret, form); err != nil {
 		return
 	}
+	if node == 2 {
+		key, _ := ioutil.ReadFile(`/home/ak/two/data/node2/PublicKey`)
+		(*form)[`pubkey`] = []string{string(key)}
+	}
+
 	ret = map[string]interface{}{}
 	err = sendPost(`contract/`+txname, form, &ret)
 	if err != nil {
@@ -241,6 +250,9 @@ func postTxResult(txname string, form *url.Values) (id int64, msg string, err er
 			msg = fmt.Sprint(ret[`result`])
 			id = converter.StrToInt64(msg)
 		}
+		return
+	}
+	if len((*form)[`nowait`]) > 0 {
 		return
 	}
 	id, err = waitTx(ret[`hash`].(string))
