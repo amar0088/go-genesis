@@ -108,7 +108,7 @@ func sendPost(url string, form *url.Values, v interface{}) error {
 }
 
 var (
-	node = 2
+	node = 1
 )
 
 func keyLogin(state int64) (err error) {

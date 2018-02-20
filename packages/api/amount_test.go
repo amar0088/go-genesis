@@ -17,10 +17,10 @@
 package api
 
 import (
+	"github.com/GenesisKernel/go-genesis/packages/converter"
 	"net/url"
 	"testing"
 	"time"
-	//	"github.com/GenesisKernel/go-genesis/packages/converter"
 )
 
 func TestTimeLimit(t *testing.T) {
@@ -31,7 +31,7 @@ func TestTimeLimit(t *testing.T) {
 	all := 2
 	sendList := func() {
 		for i := 0; i < all; i++ {
-			if err := postTx(`TestPars`, &url.Values{`Node`: {`1` /*converter.IntToStr(i)*/}, `nowait`: {`true`}}); err != nil {
+			if err := postTx(`TestPars`, &url.Values{`Node`: {converter.IntToStr(i)}, `nowait`: {`true`}}); err != nil {
 				t.Error(err)
 				return
 			}
@@ -44,6 +44,9 @@ func TestTimeLimit(t *testing.T) {
 	sendList()
 	node = 2
 	all = 9
+	sendList()
+	node = 1
+	all = 10
 	sendList()
 
 }
